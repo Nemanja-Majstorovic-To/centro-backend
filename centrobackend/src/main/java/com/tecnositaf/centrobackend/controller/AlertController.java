@@ -18,11 +18,8 @@ import com.tecnositaf.centrobackend.database.DatabaseFake;
 import com.tecnositaf.centrobackend.model.Alert;
 import com.tecnositaf.centrobackend.utilities.AlertUtilities;
 
-//TODO Controller: rename AlertController
-//TODO tutti i controller devono stare sotto il package "controller"
-
 @RestController
-@RequestMapping("/alert/")
+@RequestMapping("/alert")
 public class AlertController {
 	
 	@Autowired
@@ -35,51 +32,43 @@ public class AlertController {
 	
 	@PostMapping
 	public ResponseEntity<ArrayList<Alert>> createAlert(Alert alert) {
-		//TODO check campi obbligatori e coerenti in Alert - id==null
-		boolean checkValid = AlertUtilities.checkValidAlert(alert);
-		boolean checkConflict = AlertUtilities.checkIdConflict(alert, dbFake.getAlertTable());//TODO da utility
-		if(checkConflict == true)	
-			return ResponseEntity.badRequest().body(dbFake.getAlertTable());
+		boolean checkValid = AlertUtilities.checkValidAlertForInsert(alert);
 		if(checkValid == false) 	
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
-		dbFake.addAlert(alert);
+		dbFake.addAlert(alert);	//TODO check rows inserted -> INTERNAL_SERVER_ERROR
 		return ResponseEntity.ok().body(dbFake.getAlertTable());
-		//TODO refactor, last row = success flow
 	}
 		
 
-	@GetMapping("{idAlert}")
+	@GetMapping("/{idAlert}")
 	public ResponseEntity<Alert> getById(@PathVariable int idAlert) {
 		Alert searchedAlert = dbFake.getById(idAlert);
 		if(searchedAlert == null) 
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(searchedAlert); //TODO non è NOT_FOUND
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(searchedAlert);
 		return ResponseEntity.ok().body(searchedAlert); 
 	}
 	
-	@PutMapping	//TODO da rivedere, fatta solo se Alert esiste già altrimenti errore
+	@PutMapping	
 	public ResponseEntity<ArrayList<Alert>> updateAlert(Alert alert) {
-		//TODO check campi obbligatori e coerenti in Alert - id==null
-		boolean checkValid = AlertUtilities.checkValidAlert(alert);
+		boolean checkValid = AlertUtilities.checkValidAlertForUpdate(alert);
 		if(checkValid == false)
 			return ResponseEntity.badRequest().body(dbFake.getAlertTable());
 		Alert searchedAlert = dbFake.getById(alert.getIdAlert());
 		if(searchedAlert == null)
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		dbFake.update(searchedAlert, alert);
+		dbFake.update(alert);	//TODO check rows update -> INTERNAL_SERVER_ERROR
 		return ResponseEntity.ok().body(dbFake.getAlertTable());
-		//XXX HINT return ResponseEntity.ok().body( dbFake.update(searchedAlert, alert) );
-		//XXX HINT return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( dbFake.update(searchedAlert, alert) );
 	}
 	
-	@DeleteMapping("{idAlert}")
+	@DeleteMapping("/{idAlert}")
 	public ResponseEntity<ArrayList<Alert>> deleteAlert(@PathVariable int idAlert) {
 		if(dbFake.delete(dbFake.getById(idAlert))==false) 
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		return ResponseEntity.ok().body(dbFake.getAlertTable());
 	}
 	
-	@GetMapping("device/{idDevice}")
+	@GetMapping("/device/{idDevice}")
 	public ResponseEntity<ArrayList<Alert>> getFromDevice (@PathVariable int idDevice, Timestamp ts) {
 		ArrayList<Alert> alertsDevice = dbFake.getByIdDevice(idDevice, ts);
 		if(alertsDevice.isEmpty())

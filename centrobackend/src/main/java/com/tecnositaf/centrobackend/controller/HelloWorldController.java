@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tecnositaf.centrobackend.utilities.HelloWorldUtilities;
 
-//TODO @Controller non serve
-//TODO usando @RestController, @ResponseBody è sottointeso nei suoi metodi, non serve metterlo 
 @RestController
 public class HelloWorldController {
 

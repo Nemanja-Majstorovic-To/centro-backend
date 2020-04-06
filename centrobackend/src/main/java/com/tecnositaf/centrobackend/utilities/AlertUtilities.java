@@ -40,7 +40,18 @@ public class AlertUtilities {
 	    }
 	}
 
-	public static boolean checkValidAlert(Alert alert) {
+	public static boolean checkValidAlertForInsert(Alert alert) {
+		if(alert.getIdAlert() != null)
+			return false;
+		if(alert.getIdDeviceFk() == null)
+			return false;
+		if(alert.getTimestamp() == null)
+			return false;
+		if(alert.getType() == null)
+			return false;	
+		return true;
+	}
+	public static boolean checkValidAlertForUpdate(Alert alert) {
 		if(alert.getIdAlert() == null)
 			return false;
 		if(alert.getIdDeviceFk() == null)
@@ -52,7 +63,6 @@ public class AlertUtilities {
 		return true;
 	}
 	
-	//TODO spostare in utility
 	public static boolean checkIdConflict(Alert alertCheck, ArrayList<Alert> alertTable) {
 		for(Alert alert : alertTable) { 
 		   if(alert.getIdAlert().intValue()==alertCheck.getIdAlert().intValue()) { 

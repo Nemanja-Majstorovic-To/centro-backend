@@ -2,6 +2,8 @@ package com.tecnositaf.centrobackend.database;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -19,15 +21,23 @@ public class DatabaseFake {
     private void postConstruct() {
         Alert alert = new Alert(0, 9, new Timestamp(2020),  AlertType.NEBBIA);
 		addAlert(alert);
+		
+		Alert alert1 = new Alert(1, 9, new Timestamp(2020),  AlertType.INCENDIO);
+		addAlert(alert1);
+		Alert alert2 = new Alert(2, 9, new Timestamp(2020),  AlertType.INCIDENTE);
+		addAlert(alert2);
     }
+	
+	
 	
 	public  ArrayList<Alert> getAlertTable() {
 		return alertTable;
 	}
 	
-	//TODO public int addAlert(Alert alert) {
-	public boolean addAlert(Alert alert) {
-		return alertTable.add(alert);
+	public int addAlert(Alert alert) {
+		DatabaseFake.simulateDatabaseAutoIncrementFor(alertTable, alert);
+		alertTable.add(alert);
+		return 1;
 	}
 	
 	public Alert getById(int id) {
@@ -59,19 +69,25 @@ public class DatabaseFake {
 		return alertsDevice;
 	}
 	
-	//TODO idea sbagliata
-	//TODO public int update(Alert old, Alert updated) {
-	public int update(Alert old, Alert updated) {
-		if(old != null) {
-			old.setIdAlert(updated.getIdAlert());
-			old.setIdDeviceFk(updated.getIdDeviceFk());
-			old.setTimestamp(updated.getTimestamp());
-			old.setType(updated.getType());
-		} 
-		return alertTable.size();
+	public int update(Alert alert) {
+		Alert alertDB = getById(alert.getIdAlert());
+		if( alertDB!=null ) {
+			alertDB = alert;
+			return 1;
+		}
+		return 0;
 	}
 	
 	public boolean delete(Alert alert) {
 		return alertTable.remove(alert);
 	}
+	
+	/*************************************************************************/
+	
+	private static void simulateDatabaseAutoIncrementFor(ArrayList<Alert> tableUsers, Alert alert){
+		Optional<Alert> userWithMaxId = tableUsers.stream().max( Comparator.comparing(Alert::getIdAlert) );
+		int nextIdAlert = userWithMaxId.isPresent() ? userWithMaxId.get().getIdAlert()+1 : 1;
+		alert.setIdAlert(nextIdAlert);
+	}
+	
 }

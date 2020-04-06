@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-//@EnableAutoConfiguration	//TODO non è necessario
 public class CentroBackendApplication {
 
 	public static void main(String[] args) {

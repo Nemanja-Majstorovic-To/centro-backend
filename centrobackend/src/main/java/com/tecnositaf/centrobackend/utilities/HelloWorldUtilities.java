@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class HelloWorldUtilities {
 	
-	//TODO è un Utility
 	public static String getCurrentTime(){
 	     LocalTime time = LocalTime.now();
 	     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
@@ -14,7 +13,6 @@ public class HelloWorldUtilities {
 	     return "Current time of the day: " + formattedTime;
 	 }
 	
-	//TODO è un Utility
 	public static ArrayList<Double> getRandomList() {
 		ArrayList<Double> list = new ArrayList<>();
 		for(int i = 0; i < 10; i++) {

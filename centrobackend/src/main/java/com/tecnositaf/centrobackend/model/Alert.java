@@ -12,7 +12,6 @@ public class Alert {
 	private Timestamp timestamp;
 	private AlertType type;
 	
-	//TODO (opzionale) private String[] description = {"incidente, nebbia, incendio, veicolo contromano"}; => AlertTypeEnum (code, description)
 	
 	public Alert(int idAlert, int idDeviceFk, Timestamp ts, AlertType type) {
 		this.setIdAlert(idAlert);
