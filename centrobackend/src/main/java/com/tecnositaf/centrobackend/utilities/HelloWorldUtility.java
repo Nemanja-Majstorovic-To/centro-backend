@@ -4,7 +4,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class HelloWorldUtilities {
+public class HelloWorldUtility {
 	
 	public static String getCurrentTime(){
 	     LocalTime time = LocalTime.now();

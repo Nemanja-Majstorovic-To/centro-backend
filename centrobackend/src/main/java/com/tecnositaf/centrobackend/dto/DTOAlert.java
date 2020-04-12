@@ -1,30 +1,29 @@
-package com.tecnositaf.centrobackend.model;
+package com.tecnositaf.centrobackend.dto;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
 
-import com.tecnositaf.centrobackend.dto.DTOAlert;
-import com.tecnositaf.centrobackend.utilities.DateUtility;
+import com.tecnositaf.centrobackend.model.Alert;
 
-
-public class Alert {
+public class DTOAlert {
 
 	private Integer idAlert;
 	private Integer idDeviceFk;
 	private Timestamp timestamp;
 	private Integer idType;
+	private Integer storageYears;
 	
-	public Alert() {
+	public DTOAlert() {
 		
 	}
 	
-	public Alert(Integer idAlert, Integer idDeviceFk, Timestamp ts, Integer idType) {
+	public DTOAlert(Integer idAlert, Integer idDeviceFk, Timestamp ts, Integer idType, Integer storageYears) {
 		this.setIdAlert(idAlert);
 		this.setIdDeviceFk(idDeviceFk);
 		this.setTimestamp(ts);
-		this.setType(idType);	
+		this.setType(idType);
+		this.setStorageYears(storageYears);
 	}
 	
 	
@@ -65,19 +64,16 @@ public class Alert {
 	public void setType(Integer idType) {
 		this.idType = idType;
 	}
-
 	
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Alert alert = (Alert) o;
-		return Objects.equals(idAlert, alert.idAlert) &&
-				Objects.equals(idDeviceFk, alert.idDeviceFk) &&
-				Objects.equals(idType, alert.idType) &&
-				Objects.equals(timestamp, alert.timestamp);
+	public Integer getStorageYears() {
+		return storageYears;
 	}
-	
+
+
+	public void setStorageYears(Integer storageYears) {
+		this.storageYears = storageYears;
+	}
+
 	@Override
     public String toString(){
         final StringBuilder sb = new StringBuilder();
@@ -86,19 +82,22 @@ public class Alert {
         sb.append(", device=").append(idDeviceFk);
         sb.append(", timestamp=").append(timestamp.toString());
         sb.append(", type=").append(idType);
+        sb.append(", storageYears=").append(storageYears);
         sb.append('}');        
         return sb.toString();
     }
-	
-	//XXX nuovo metodo che ho aggiunto al model per il passaggo al DTO corrispondente
-	public DTOAlert toDTOAlert() {
-		DTOAlert output = new DTOAlert();						
-		BeanUtils.copyProperties(this, output);		
-		/*** 'storageYears' of DTO class is a value calculated from 'timestamp' ***/
-		Integer age = DateUtility.calculateAgeOf(this.getTimestamp());
-		output.setStorageYears(age);
 
+	/*************************************************************************************************/
+	/*************************************************************************************************/
+	/*************************************************************************************************/
+
+	
+	public Alert toAlert() {
+		Alert output = new Alert();			// 'this' 	=> DTOUser				'output'	=> User
+		BeanUtils.copyProperties(this, output);		//vengono settate in 'output' tutti campi che hanno lo stesso nome tra la classe User e DTOUser
 		return output;
 	}
+
+
 
 }
