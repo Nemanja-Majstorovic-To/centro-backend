@@ -11,9 +11,7 @@ public class FailureException extends RuntimeException {
 	
 	private HttpStatus httpStatus;
 	private ResponseErrorEnum responseErrorEnum;
-	
-	
-	
+		
 	public FailureException() {
 		super();
 	}

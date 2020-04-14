@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 
 import com.tecnositaf.centrobackend.model.Alert;
-import com.tecnositaf.centrobackend.utilities.DateUtility;
 
 @Component
 public class DatabaseFake {
@@ -107,16 +106,7 @@ public class DatabaseFake {
 	}
 	
 
-	public ArrayList<Alert> queryGetAlertsByStorageYears(Integer startTime) {
-		logger.info("SELECT * FROM ALERTS WHERE alert.storageYears >= " + startTime);
-		ArrayList<Alert> alerts = new ArrayList<>();
-		for(Alert alert : alertTable) {
-			if(DateUtility.calculateAgeOf(alert.getTimestamp()) >= startTime)
-				alerts.add(alert);
-		}
-		
-		return alerts;
-	}
+	
 	
 	/*************************************************************************/
 	

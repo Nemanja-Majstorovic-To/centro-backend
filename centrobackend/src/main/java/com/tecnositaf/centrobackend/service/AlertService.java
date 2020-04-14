@@ -13,6 +13,7 @@ import com.tecnositaf.centrobackend.enumeration.ResponseErrorEnum;
 import com.tecnositaf.centrobackend.exception.FailureException;
 import com.tecnositaf.centrobackend.model.Alert;
 import com.tecnositaf.centrobackend.repository.AlertRepository;
+import com.tecnositaf.centrobackend.utilities.DateUtility;
 
 @Service
 public class AlertService {
@@ -45,15 +46,14 @@ public class AlertService {
 	
 	/*** READ BY STORAGE YEARS ***/
 	public ArrayList<Alert> getAlertsByStorageYears(Integer numYears) {
-		/*Long start = DateUtility.calculateStartDate(numYears);
-		if(start == null) {
-			logger.error("ERROR calculate storage years failure");
-			throw new FailureException(
-				HttpStatus.INTERNAL_SERVER_ERROR, 
-				ResponseErrorEnum.ERR_500
-			);
-		}*/
-		return alertRepository.getAlertsByStorageYears(numYears);
+		ArrayList<Alert> alertTable = alertRepository.getAlerts();
+		ArrayList<Alert> alerts = new ArrayList<>();
+		for(Alert alert : alertTable) {
+			if(DateUtility.calculateAgeOf(alert.getTimestamp()) >= numYears)
+				alerts.add(alert);
+		}
+		
+		return alerts;
 	}
 		
 	

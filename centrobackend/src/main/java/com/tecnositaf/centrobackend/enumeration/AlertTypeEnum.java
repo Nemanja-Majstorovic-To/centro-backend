@@ -1,5 +1,8 @@
 package com.tecnositaf.centrobackend.enumeration;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum AlertTypeEnum {
 
 	INCIDENTE("incidente", 1),
@@ -21,7 +24,8 @@ public enum AlertTypeEnum {
 
 	public int getCode() {
 		return code;
-	}			
+	}		
+	
 	
 	@Override
     public String toString(){
@@ -32,4 +36,18 @@ public enum AlertTypeEnum {
         sb.append('}');
         return sb.toString();
     }
+	
+	/****************************************************************/
+	
+	public static AlertTypeEnum getById(int idType) {
+		List<AlertTypeEnum> alertTypeList = Arrays.asList(AlertTypeEnum.values());
+		
+		AlertTypeEnum result = alertTypeList.stream()
+				.filter(x -> idType == x.code)
+				.findFirst()
+				.orElse(null);
+		
+		return result;
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.tecnositaf.centrobackend.utilities;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
+import com.tecnositaf.centrobackend.enumeration.AlertTypeEnum;
 
 public class AlertUtility {
 	
@@ -8,7 +9,7 @@ public class AlertUtility {
 		if(alert.getIdAlert() != null) return false;
 		if(alert.getIdDeviceFk() == null) return false;
 		if(alert.getTimestamp() == null) return false;
-		if(alert.getType() == null) return false;	
+		if(AlertTypeEnum.getById(alert.getType()) == null) return false;	
 		
 		return true;
 	}
@@ -17,7 +18,7 @@ public class AlertUtility {
 		if(alert.getIdAlert() == null) return false;
 		if(alert.getIdDeviceFk() == null) return false;
 		if(alert.getTimestamp() == null) return false;
-		if(alert.getType() == null) return false;	
+		if(AlertTypeEnum.getById(alert.getType()) == null) return false;	
 		
 		return true;
 	}		

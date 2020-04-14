@@ -3,8 +3,6 @@ package com.tecnositaf.centrobackend.repository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +11,6 @@ import com.tecnositaf.centrobackend.model.Alert;
 
 @Repository
 public class AlertRepository {
-
-	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private DatabaseFake dbFake;
@@ -46,10 +42,6 @@ public class AlertRepository {
 	public ArrayList<Alert> getAlertsByDevice(Integer idDevice, Timestamp ts) {
 		return dbFake.queryGetAlertsByDevice(idDevice, ts);
 	}
-			
-	public ArrayList<Alert> getAlertsByStorageYears(Integer startTime) {
-		return dbFake.queryGetAlertsByStorageYears(startTime);
-	}
-	
+		
 
 }
