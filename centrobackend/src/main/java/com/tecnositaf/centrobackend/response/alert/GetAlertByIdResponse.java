@@ -1,7 +1,8 @@
-package com.tecnositaf.centrobackend.response;
+package com.tecnositaf.centrobackend.response.alert;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.model.Alert;
+import com.tecnositaf.centrobackend.response.Response;
 
 public class GetAlertByIdResponse extends Response {
 

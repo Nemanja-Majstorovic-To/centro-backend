@@ -1,11 +1,13 @@
 package com.tecnositaf.centrobackend.service;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,30 +28,33 @@ public class AlertService {
 	/*** READ ***/
 	
 	public ArrayList<Alert> getAlerts() {
-		return alertRepository.getAlerts();
+		return (ArrayList<Alert>) alertRepository.findAll();
 	}
 	
 	/*** READ BY ALERT ID ***/
 	
-	public Alert getAlertById(Integer idAlert) {
-		return alertRepository.getAlertById(idAlert);
+	public Optional<Alert> getAlertById(String idAlert) {
+		return alertRepository.findById(idAlert);
 	}
 	
 	/*** READ BY DEVICE ID ***/
 	
 	public ArrayList<Alert> getAlertsByDevice(Integer idDevice) {
-		return alertRepository.getAlertsByDevice(idDevice);
+		return alertRepository.findByIdDeviceFk(idDevice);
 	}	
-	public ArrayList<Alert> getAlertsByDevice(Integer idDevice, Timestamp timestamp) {
-		return alertRepository.getAlertsByDevice(idDevice, timestamp);
+	
+	
+	public ArrayList<Alert> getAlertsByDevice(Integer idDevice, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate) {
+		return alertRepository.findByIdDeviceFkAndDate(idDevice, localDate);
 	}
+	
 	
 	/*** READ BY STORAGE YEARS ***/
 	public ArrayList<Alert> getAlertsByStorageYears(Integer numYears) {
-		ArrayList<Alert> alertTable = alertRepository.getAlerts();
+		ArrayList<Alert> alertTable = (ArrayList<Alert>) alertRepository.findAll();
 		ArrayList<Alert> alerts = new ArrayList<>();
 		for(Alert alert : alertTable) {
-			if(DateUtility.calculateAgeOf(alert.getTimestamp()) >= numYears)
+			if(DateUtility.calculateAgeOf(alert.getLocalDate()) >= numYears)
 				alerts.add(alert);
 		}
 		
@@ -59,47 +64,43 @@ public class AlertService {
 	
 	/*** INSERT ***/	
 
-	public int insertNewAlertWithRowsInsertedCheck(Alert alert) {
-		int numRowsInserted = alertRepository.insertNewAlert(alert);
-		if( numRowsInserted==0 ) {
+	public int insertNewAlert(Alert alert) {
+		
+		if( alertRepository.insert(alert) == null) {
 			logger.error("ERROR insert alert failure - " + alert.toString());
 			throw new FailureException(
 				HttpStatus.INTERNAL_SERVER_ERROR, 
 				ResponseErrorEnum.ERR_2
 			);
 		}
-		return numRowsInserted;
+		return 1;
 	}
 	
 	/*** UPDATE ***/
 	
 	public int updateAlert(Alert alert) {
-		int numRowsUpdated = alertRepository.updateAlert(alert);
-		if( numRowsUpdated==0 ) {
+		
+		if( alertRepository.save(alert) == null ) {
 			logger.error("ERROR update alert failure - " + alert.toString());
 			throw new FailureException(
 				HttpStatus.INTERNAL_SERVER_ERROR, 
 				ResponseErrorEnum.ERR_2
 			);
 		}
-		return numRowsUpdated;
+		
+		return 1;
 	}
 	
 	/*** DELETE ***/
 	
 	public int deleteAlert(Alert alert) {
-		int numRowsDeleted = alertRepository.deleteAlert(alert);
-		if( numRowsDeleted==0 ) {
-			logger.error("ERROR delete alert failure - " + alert.toString());
-			throw new FailureException(
-				HttpStatus.INTERNAL_SERVER_ERROR, 
-				ResponseErrorEnum.ERR_2
-			);
-		}
-		return numRowsDeleted;
+		alertRepository.delete(alert);
+		return 1;
 	}
 	
-	
+	public void deleteAllAlerts() {
+		alertRepository.deleteAll();
+	}
 	
 	
 }

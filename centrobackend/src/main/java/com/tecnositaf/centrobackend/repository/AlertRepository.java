@@ -1,47 +1,21 @@
 package com.tecnositaf.centrobackend.repository;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Repository;
 
-import com.tecnositaf.centrobackend.database.DatabaseFake;
 import com.tecnositaf.centrobackend.model.Alert;
 
 @Repository
-public class AlertRepository {
-
-	@Autowired
-	private DatabaseFake dbFake;
+public interface AlertRepository extends MongoRepository<Alert, String> {
+			
+	public ArrayList<Alert> findByIdDeviceFk(Integer idDeviceFk);
 	
-	public ArrayList<Alert> getAlerts() {
-		return dbFake.queryGetAlerts();
-	}
-
-	public int insertNewAlert(Alert alert) {
-		return dbFake.queryInsertNewAlert(alert);
-	}
-
-	public Alert getAlertById(Integer idAlert) {
-		return dbFake.queryGetAlertByID(idAlert);
-	}
-	
-	public int updateAlert(Alert alert) {
-		return dbFake.queryUpdateAlert(alert);
-	}
-	
-	public int deleteAlert(Alert alert) {
-		return dbFake.queryDeleteAlert(alert);
-	}
-	
-	public ArrayList<Alert> getAlertsByDevice(Integer idDevice) {
-		return dbFake.queryGetAlertsByDevice(idDevice);
-	}
-	
-	public ArrayList<Alert> getAlertsByDevice(Integer idDevice, Timestamp ts) {
-		return dbFake.queryGetAlertsByDevice(idDevice, ts);
-	}
-		
+	@Query("{'idDeviceFk': ?0, 'localDate': { $gte : ?1 }}")
+	public ArrayList<Alert> findByIdDeviceFkAndDate(Integer idDeviceFk, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate);
 
 }

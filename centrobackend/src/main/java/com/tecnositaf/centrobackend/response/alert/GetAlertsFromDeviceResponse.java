@@ -1,14 +1,15 @@
-package com.tecnositaf.centrobackend.response;
+package com.tecnositaf.centrobackend.response.alert;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.model.Alert;
+import com.tecnositaf.centrobackend.response.Response;
 
 public class GetAlertsFromDeviceResponse extends Response {
 	private ArrayList<DTOAlert> alerts;	
-	private Timestamp timestamp;
+	private LocalDate localDate;
 	private int size;
 	
 	public GetAlertsFromDeviceResponse(int code, String message) {
@@ -17,22 +18,22 @@ public class GetAlertsFromDeviceResponse extends Response {
 		this.size = 0;
 	}
 
-	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, Timestamp ts, int size) {
+	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, LocalDate localDate, int size) {
 		super(code, message);
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
-		this.timestamp = ts;
+		this.localDate = localDate;
 		this.size = size;
 	}
-	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, Timestamp ts) {
+	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, LocalDate localDate) {
 		super(code, message);
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
-		this.timestamp = ts;
+		this.localDate = localDate;
 		this.size = alerts.size();
 	}
 
@@ -53,18 +54,18 @@ public class GetAlertsFromDeviceResponse extends Response {
 		this.size = size;
 	}
 	
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public LocalDate getLocalDate() {
+		return localDate;
 	}
 
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
+	public void setLocalDate(LocalDate localDate) {
+		this.localDate = localDate;
 	}
 	
 	
 	@Override
 	public String toString() {
-		return "GetAlertsFromDeviceResponse {alertUpdated= alerts=" + alerts + ", timestamp=" + timestamp.toString() + " size=" + size + "}";
+		return "GetAlertsFromDeviceResponse {alertUpdated= alerts=" + alerts + ", localDate=" + localDate.toString() + " size=" + size + "}";
 	}
 
 	
