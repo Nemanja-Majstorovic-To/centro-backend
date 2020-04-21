@@ -1,42 +1,52 @@
-package com.tecnositaf.centrobackend.response;
+package com.tecnositaf.centrobackend.response.alert;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.model.Alert;
+import com.tecnositaf.centrobackend.response.Response;
 
-public class GetAlertsFromDeviceResponse extends Response {
+public class PutAlertResponse extends Response {
+	private DTOAlert alertUpdated;
 	private ArrayList<DTOAlert> alerts;	
-	private Timestamp timestamp;
 	private int size;
 	
-	public GetAlertsFromDeviceResponse(int code, String message) {
+	public PutAlertResponse(int code, String message) {
 		super(code, message);
+		this.alertUpdated = null;
 		this.alerts = null;
 		this.size = 0;
 	}
 
-	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, Timestamp ts, int size) {
+	public PutAlertResponse(int code, String message, Alert alertUpdated, ArrayList<Alert> alerts, int size) {
 		super(code, message);
+		this.alertUpdated = alertUpdated.toDTOAlert();
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
-		this.timestamp = ts;
 		this.size = size;
 	}
-	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, Timestamp ts) {
+	public PutAlertResponse(int code, String message, Alert alertUpdated, ArrayList<Alert> alerts) {
 		super(code, message);
+		this.alertUpdated = alertUpdated.toDTOAlert();
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
-		this.timestamp = ts;
 		this.size = alerts.size();
 	}
 
 	
+	
+	public DTOAlert getAlertUpdated() {
+		return alertUpdated;
+	}
+
+	public void setAlertUpdated(DTOAlert alertUpdated) {
+		this.alertUpdated = alertUpdated;
+	}
+
 	public ArrayList<DTOAlert> getAlerts() {
 		return alerts;
 	}
@@ -52,20 +62,11 @@ public class GetAlertsFromDeviceResponse extends Response {
 	public void setSize(int size) {
 		this.size = size;
 	}
-	
-	public Timestamp getTimestamp() {
-		return timestamp;
-	}
 
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
-	}
 	
 	
 	@Override
 	public String toString() {
-		return "GetAlertsFromDeviceResponse {alertUpdated= alerts=" + alerts + ", timestamp=" + timestamp.toString() + " size=" + size + "}";
+		return "PutAlertResponse {alertUpdated=" + alertUpdated + ", alerts=" + alerts + ", size=" + size + "}";
 	}
-
-	
 }

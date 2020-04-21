@@ -1,11 +1,13 @@
 package com.tecnositaf.centrobackend.controller;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,21 +17,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.enumeration.ResponseErrorEnum;
 import com.tecnositaf.centrobackend.exception.FailureException;
 import com.tecnositaf.centrobackend.model.Alert;
-import com.tecnositaf.centrobackend.response.DeleteAlertResponse;
-import com.tecnositaf.centrobackend.response.GetAlertByIdResponse;
-import com.tecnositaf.centrobackend.response.GetAlertsByStorageYearsResponse;
-import com.tecnositaf.centrobackend.response.GetAlertsFromDeviceResponse;
-import com.tecnositaf.centrobackend.response.GetAlertsResponse;
-import com.tecnositaf.centrobackend.response.InsertNewAlertResponse;
-import com.tecnositaf.centrobackend.response.PutAlertResponse;
+import com.tecnositaf.centrobackend.response.alert.DeleteAlertResponse;
+import com.tecnositaf.centrobackend.response.alert.GetAlertByIdResponse;
+import com.tecnositaf.centrobackend.response.alert.GetAlertsByStorageYearsResponse;
+import com.tecnositaf.centrobackend.response.alert.GetAlertsFromDeviceResponse;
+import com.tecnositaf.centrobackend.response.alert.GetAlertsResponse;
+import com.tecnositaf.centrobackend.response.alert.InsertNewAlertResponse;
+import com.tecnositaf.centrobackend.response.alert.PutAlertResponse;
 import com.tecnositaf.centrobackend.service.AlertService;
 import com.tecnositaf.centrobackend.utilities.AlertUtility;
+
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/alert")
@@ -51,18 +56,27 @@ public class AlertController {
 		);
 	}
 	
-	
 	@PostMapping
-	public ResponseEntity<InsertNewAlertResponse> createAlert(@RequestBody DTOAlert dtoAlert) {
+	public ResponseEntity<InsertNewAlertResponse> createAlert(
+			@RequestBody
+			@ApiParam(value = "Id Alert not required")
+			DTOAlert dtoAlert) {
 		logger.info("---------- POST /alert----------");
 
-		if( !AlertUtility.isValidAlertForInsert(dtoAlert) ){		//XXX aggiunta (per scopi di esempio) la validazione dell'input "fatta a mano"
+		if( !AlertUtility.isValidAlertForInsert(dtoAlert) ){		
 			logger.info("INPUT VALIDATION ERROR - alert => " + dtoAlert.toString());
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_1);
 		}
+
 		Alert alert = dtoAlert.toAlert();
 		
-		int numRowsInserted = alertService.insertNewAlertWithRowsInsertedCheck(alert);
+
+		if(alert == null) {
+			logger.info("ERROR WHILE CONVERTING DTO TO ALERT ");
+			throw new FailureException(HttpStatus.INTERNAL_SERVER_ERROR, ResponseErrorEnum.ERR_500);
+		}
+		
+		int numRowsInserted = alertService.insertNewAlert(alert);
 		logger.info("numRowsInserted => " + numRowsInserted);
 		
 		ArrayList<Alert> alerts = alertService.getAlerts();
@@ -72,20 +86,21 @@ public class AlertController {
 	}
 		
 	@GetMapping("/{idAlert}")
-	public ResponseEntity<GetAlertByIdResponse> getAlert(@PathVariable Integer idAlert) {
+	public ResponseEntity<GetAlertByIdResponse> getAlert(@PathVariable String idAlert) {
 		logger.info("---------- GET /alert/{idAlert} ----------");
-		Alert alert = alertService.getAlertById(idAlert);
+		Optional<Alert> alertOpt = alertService.getAlertById(idAlert);
 		
-		if(alert == null) {
-			logger.info("INPUT VALIDATION ERROR - no alert found with id => " + idAlert.intValue());
+		if(alertOpt.isEmpty()) {
+			logger.info("INPUT VALIDATION ERROR - no alert found with id => ");
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_3);
 		}
 		
+		Alert alert = alertOpt.get();		
 		return ResponseEntity.status(HttpStatus.OK).body(
 				new GetAlertByIdResponse(0, "SUCCESS", alert)
 		);
 	}
-	
+
 	@PutMapping	
 	public ResponseEntity<PutAlertResponse> updateAlert(@RequestBody DTOAlert dtoAlert) {
 		logger.info("---------- PUT /alert ----------");
@@ -95,32 +110,34 @@ public class AlertController {
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_1);
 		}
 		
-		Alert searchedAlert = alertService.getAlertById(dtoAlert.getIdAlert());
-		if(searchedAlert == null) {
+		Optional<Alert> searchedAlert = alertService.getAlertById(dtoAlert.getIdAlert());
+		if(searchedAlert.isEmpty()) {
 			logger.info("INPUT VALIDATION ERROR - alert not found for update => " + dtoAlert.toString());
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_3);
 		}
 		
-		searchedAlert = dtoAlert.toAlert();
-		int numRowsUpdated = alertService.updateAlert(searchedAlert);;
+		Alert alert = searchedAlert.get();
+		alert = dtoAlert.toAlert();
+		int numRowsUpdated = alertService.updateAlert(alert);;
 		logger.info("numRowsUpdated => " + numRowsUpdated);
 		
 		ArrayList<Alert> alerts = alertService.getAlerts();	
 		return ResponseEntity.status(HttpStatus.OK).body(
-				new PutAlertResponse(0, "SUCCESS", searchedAlert, alerts)
+				new PutAlertResponse(0, "SUCCESS", alert, alerts)
 		);
 	}
 	
 	@DeleteMapping("/{idAlert}")
-	public ResponseEntity<DeleteAlertResponse> deleteAlert(@PathVariable Integer idAlert) {
+	public ResponseEntity<DeleteAlertResponse> deleteAlert(@PathVariable String idAlert) {
 		logger.info("---------- DELETE /alert ----------");
-		Alert alert = alertService.getAlertById(idAlert);
+		Optional<Alert> alertOpt = alertService.getAlertById(idAlert);
 		
-		if(alert == null) {
-			logger.info("INPUT VALIDATION ERROR - no alert found with id => " + idAlert.intValue());
+		if(alertOpt.isEmpty()) {
+			logger.info("INPUT VALIDATION ERROR - no alert found with id => " + idAlert);
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_3);
 		}
-
+		
+		Alert alert = alertOpt.get();
 		int numRowsDeleted = alertService.deleteAlert(alert);
 		logger.info("numRowsDeleted => " + numRowsDeleted);
 		
@@ -129,17 +146,21 @@ public class AlertController {
 				new DeleteAlertResponse(0, "SUCCESS", alert, alerts)
 		);
 	}
-	
-	
+		
 	@GetMapping("/device/{idDevice}")
-	public ResponseEntity<GetAlertsFromDeviceResponse> getFromDevice(@PathVariable Integer idDevice, Timestamp ts) {
+	public ResponseEntity<GetAlertsFromDeviceResponse> getFromDevice(@PathVariable Integer idDevice, 
+			@RequestParam(required = false)
+			@DateTimeFormat(pattern = "yyyy-MM-dd")
+			LocalDate localDate) {
+		
 		logger.info("---------- GET /alert/device/{idDevice} ----------");
 				
 		ArrayList<Alert> alertsDevice;
-		if(ts == null) 
+		if(localDate == null) 
 			alertsDevice = alertService.getAlertsByDevice(idDevice);
 		else
-			alertsDevice = alertService.getAlertsByDevice(idDevice, ts);
+			alertsDevice = alertService.getAlertsByDevice(idDevice, localDate);
+		
 
 		if(alertsDevice.isEmpty()){
 			logger.info("INPUT VALIDATION ERROR  - no alert found for specified device => " + idDevice);
@@ -147,7 +168,7 @@ public class AlertController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(
-				new GetAlertsFromDeviceResponse(0, "SUCCESS", alertsDevice, ts)
+				new GetAlertsFromDeviceResponse(0, "SUCCESS", alertsDevice, localDate)
 		);
 	}
 	

@@ -1,51 +1,43 @@
-package com.tecnositaf.centrobackend.response;
+package com.tecnositaf.centrobackend.response.alert;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.model.Alert;
+import com.tecnositaf.centrobackend.response.Response;
 
-public class PutAlertResponse extends Response {
-	private DTOAlert alertUpdated;
+public class GetAlertsFromDeviceResponse extends Response {
 	private ArrayList<DTOAlert> alerts;	
+	private LocalDate localDate;
 	private int size;
 	
-	public PutAlertResponse(int code, String message) {
+	public GetAlertsFromDeviceResponse(int code, String message) {
 		super(code, message);
-		this.alertUpdated = null;
 		this.alerts = null;
 		this.size = 0;
 	}
 
-	public PutAlertResponse(int code, String message, Alert alertUpdated, ArrayList<Alert> alerts, int size) {
+	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, LocalDate localDate, int size) {
 		super(code, message);
-		this.alertUpdated = alertUpdated.toDTOAlert();
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
+		this.localDate = localDate;
 		this.size = size;
 	}
-	public PutAlertResponse(int code, String message, Alert alertUpdated, ArrayList<Alert> alerts) {
+	public GetAlertsFromDeviceResponse(int code, String message, ArrayList<Alert> alerts, LocalDate localDate) {
 		super(code, message);
-		this.alertUpdated = alertUpdated.toDTOAlert();
 		this.alerts = new ArrayList<DTOAlert>();	
 		alerts.forEach(alert -> 
 			this.alerts.add( alert.toDTOAlert() )
 		);
+		this.localDate = localDate;
 		this.size = alerts.size();
 	}
 
 	
-	
-	public DTOAlert getAlertUpdated() {
-		return alertUpdated;
-	}
-
-	public void setAlertUpdated(DTOAlert alertUpdated) {
-		this.alertUpdated = alertUpdated;
-	}
-
 	public ArrayList<DTOAlert> getAlerts() {
 		return alerts;
 	}
@@ -61,11 +53,20 @@ public class PutAlertResponse extends Response {
 	public void setSize(int size) {
 		this.size = size;
 	}
+	
+	public LocalDate getLocalDate() {
+		return localDate;
+	}
 
+	public void setLocalDate(LocalDate localDate) {
+		this.localDate = localDate;
+	}
 	
 	
 	@Override
 	public String toString() {
-		return "PutAlertResponse {alertUpdated=" + alertUpdated + ", alerts=" + alerts + ", size=" + size + "}";
+		return "GetAlertsFromDeviceResponse {alertUpdated= alerts=" + alerts + ", localDate=" + localDate.toString() + " size=" + size + "}";
 	}
+
+	
 }

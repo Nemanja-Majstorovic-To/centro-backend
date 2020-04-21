@@ -1,39 +1,48 @@
 package com.tecnositaf.centrobackend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.tecnositaf.centrobackend.dto.DTOAlert;
 import com.tecnositaf.centrobackend.utilities.DateUtility;
 
-
+@Document("Alert")
 public class Alert {
 
-	private Integer idAlert;
+	@Id
+	private String idAlert;
+	
 	private Integer idDeviceFk;
-	private Timestamp timestamp;
+	private LocalDate localDate;
 	private Integer idType;
 	
 	public Alert() {
 		
 	}
 	
-	public Alert(Integer idAlert, Integer idDeviceFk, Timestamp ts, Integer idType) {
+	public Alert(String idAlert, Integer idDeviceFk, LocalDate ts, Integer idType) {
 		this.setIdAlert(idAlert);
 		this.setIdDeviceFk(idDeviceFk);
-		this.setTimestamp(ts);
+		this.setLocalDate(ts);
 		this.setType(idType);	
 	}
 	
+	public Alert(Integer idDeviceFk, LocalDate ts, Integer idType) {
+		this.setIdDeviceFk(idDeviceFk);
+		this.setLocalDate(ts);
+		this.setType(idType);	
+	}
 	
-	public Integer getIdAlert() {
+	public String getIdAlert() {
 		return idAlert;
 	}
 
 
-	public void setIdAlert(Integer idAlert) {
+	public void setIdAlert(String idAlert) {
 		this.idAlert = idAlert;
 	}
 
@@ -48,13 +57,13 @@ public class Alert {
 	}
 
 
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public LocalDate getLocalDate() {
+		return localDate;
 	}
 
 
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
+	public void setLocalDate(LocalDate LocalDate) {
+		this.localDate = LocalDate;
 	}
 
 	public Integer getType() {
@@ -67,15 +76,15 @@ public class Alert {
 	}
 
 	
-	@Override
-	public boolean equals(Object o) {
+	
+	public boolean equalsWithoutId(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Alert alert = (Alert) o;
-		return Objects.equals(idAlert, alert.idAlert) &&
+		return 
 				Objects.equals(idDeviceFk, alert.idDeviceFk) &&
 				Objects.equals(idType, alert.idType) &&
-				Objects.equals(timestamp, alert.timestamp);
+				Objects.equals(localDate, alert.localDate);
 	}
 	
 	@Override
@@ -84,18 +93,17 @@ public class Alert {
         sb.append("Alert");
         sb.append("{id=").append(idAlert);
         sb.append(", device=").append(idDeviceFk);
-        sb.append(", timestamp=").append(timestamp.toString());
+        sb.append(", LocalDate=").append(localDate.toString());
         sb.append(", type=").append(idType);
         sb.append('}');        
         return sb.toString();
     }
 	
-	//XXX nuovo metodo che ho aggiunto al model per il passaggo al DTO corrispondente
 	public DTOAlert toDTOAlert() {
 		DTOAlert output = new DTOAlert();						
 		BeanUtils.copyProperties(this, output);		
-		/*** 'storageYears' of DTO class is a value calculated from 'timestamp' ***/
-		Integer age = DateUtility.calculateAgeOf(this.getTimestamp());
+		/*** 'storageYears' of DTO class is a value calculated from 'LocalDate' ***/
+		Integer age = DateUtility.calculateAgeOf(this.getLocalDate());
 		output.setStorageYears(age);
 
 		return output;
