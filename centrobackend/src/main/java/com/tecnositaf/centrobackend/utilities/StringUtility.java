@@ -1,23 +1,8 @@
 package com.tecnositaf.centrobackend.utilities;
 
 import java.util.Random;
-import java.util.regex.Pattern;
 
 public class StringUtility {
-
-	public static boolean validateMail(String mailToValidate) {
-		
-		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
-							"[a-zA-Z0-9_+&*-]+)*@" + 
-							"(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
-							"A-Z]{2,7}$"; 
-		           
-		Pattern pat = Pattern.compile(emailRegex); 
-		if (mailToValidate == null) 
-			return false; 	
-		return pat.matcher(mailToValidate).matches(); 
-		
-	}
 
 	public static String generateCasualString(){
 		int leftLimit = 48; // numeral '0'

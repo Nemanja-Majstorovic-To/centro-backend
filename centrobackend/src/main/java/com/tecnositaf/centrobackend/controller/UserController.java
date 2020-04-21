@@ -32,7 +32,7 @@ import com.tecnositaf.centrobackend.utilities.UserUtility;
 @RequestMapping("/user")
 public class UserController {
 
-final Logger logger = LoggerFactory.getLogger(this.getClass());
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	private UserService userService;

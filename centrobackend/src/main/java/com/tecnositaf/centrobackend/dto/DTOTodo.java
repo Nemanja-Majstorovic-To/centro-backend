@@ -1,49 +1,48 @@
 package com.tecnositaf.centrobackend.dto;
 
-import java.time.LocalDate;
 
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tecnositaf.centrobackend.model.Todo;
 
 public class DTOTodo {
 
-	private Integer id;
+	@JsonProperty("id")
+	private Integer idTodo;
 
-	private Integer userId;
+	@JsonProperty("userId")	
+	private Integer idUserFk;
+	
 	private String title;
 	private Boolean completed;
-	
+
 	public DTOTodo() {
 		
 	}
 	
-	public DTOTodo(Integer id, Integer userId, String title, Boolean completed) {
-		this.setId(id);
-		this.setUserId(userId);
+	public DTOTodo(Integer idTodo, Integer idUserFk, String title, Boolean completed) {
+		this.setIdTodo(idTodo);
+		this.setIdUserFk(idUserFk);
 		this.setTitle(title);
 		this.setCompleted(completed);	
 	}
 	
-	public DTOTodo(Integer idDeviceFk, LocalDate ts, Integer idType) {
-		this.setId(id);
-		this.setUserId(userId);
-		this.setTitle(title);
-		this.setCompleted(completed);	
+	@JsonProperty("id")
+	public Integer getIdTodo() {
+		return idTodo;
 	}
-	
-	public Integer getId() {
-		return id;
+	@JsonProperty("id")
+	public void setIdTodo(Integer idTodo) {
+		this.idTodo = idTodo;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	@JsonProperty("userId")	
+	public Integer getIdUserFk() {
+		return idUserFk;
 	}
-	
-	public Integer getUserId() {
-		return userId;
-	}
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	@JsonProperty("userId")	
+	public void setIdUserFk(Integer idUserFk) {
+		this.idUserFk = idUserFk;
 	}
 	
 	public String getTitle() {
@@ -69,8 +68,8 @@ public class DTOTodo {
 	public String toString() {
 	    final StringBuilder sb = new StringBuilder();
         sb.append("DTOTodo");
-        sb.append("{id=").append(id);
-        sb.append(", userId=").append(userId);
+        sb.append("{id=").append(idTodo);
+        sb.append(", idUserFk=").append(idUserFk);
         sb.append(", title=").append(title);
         sb.append(", completed=").append(completed);
         sb.append('}');        
@@ -80,6 +79,8 @@ public class DTOTodo {
 	public Todo toTodo() {
 		Todo output = new Todo();			// 'this' 	=> DTOUser				'output'	=> User
 		BeanUtils.copyProperties(this, output);		//vengono settate in 'output' tutti campi che hanno lo stesso nome tra la classe User e DTOUser
+		output.setId(this.idTodo);
+		output.setUserId(this.idUserFk);
 		return output;
 	}
 }

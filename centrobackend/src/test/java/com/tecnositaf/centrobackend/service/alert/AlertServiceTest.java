@@ -2,12 +2,11 @@ package com.tecnositaf.centrobackend.service.alert;
 
 import static org.junit.Assert.assertSame;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -43,29 +42,32 @@ public class AlertServiceTest {
 
         assertSame(3, alertsActual.size());
 
-	    Alert alert1 = new Alert(1, 9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
+	    Alert alert1 = new Alert(9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
         
         assert(alert1.equals(alertsActual.get(0)));
     }
 
     @Test
     public void testGetAlertById() {
-	    Alert alert1 = new Alert(1, 9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
-        Alert alertId1 = alertService.getAlertById(1);
+	    Alert alert1 = new Alert(9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
+	   
+	    List<Alert> alertsActual = alertService.getAlerts();
+        Alert alertId1 = alertService.getAlertById(alertsActual.get(0).getIdAlert()).get();
+        
         assert(alert1.equals(alertId1));
     }
     
     @Test
     public void testGetAlertByIdFailureNotFound() {
-        Alert alertId1 = alertService.getAlertById(10);
-        assert(alertId1 == null);
+        Optional<Alert> alertId1 = alertService.getAlertById("10");
+        assert(alertId1.isEmpty());
     }
     
     @Test
     public void testGetAlertByDevice() {
         List<Alert> alertsActual = alertService.getAlertsByDevice(9);
         assertSame(2, alertsActual.size());
-	    Alert alert1 = new Alert(1, 9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
+	    Alert alert1 = new Alert(9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
         assert(alert1.equals(alertsActual.get(0)));
     }
     
@@ -74,26 +76,26 @@ public class AlertServiceTest {
         List<Alert> alertsActual = alertService.getAlertsByDevice(90);
         assert(0 == alertsActual.size());
     }
-    /*
+    
     @Test
     public void testGetAlertByDeviceAndTimestamp() {
-        List<Alert> alertsActual = alertService.getAlertsByDevice(9, Timestamp.valueOf(LocalDateTime.of(LocalDate.of(1997, Month.APRIL, 18), LocalTime.NOON)));
+        List<Alert> alertsActual = alertService.getAlertsByDevice(9, LocalDate.of(1994, Month.SEPTEMBER, 9));
         assertSame(2, alertsActual.size());
-    	Alert alert1 = new Alert(9, LocalDate.of(1997, Month.APRIL, 18), 1);
-        assert(alert1.equals(alertsActual.get(1)));
+    	Alert alert1 = new Alert(9, LocalDate.of(2003, Month.JULY, 16), 3);
+        assert(alert1.equals(alertsActual.get(2)));
     }
     
     @Test
     public void testGetAlertByDeviceAndTimestampFailureNotFound() {
-        List<Alert> alertsActual = alertService.getAlertsByDevice(9, Timestamp.valueOf(LocalDateTime.of(LocalDate.of(2007, Month.APRIL, 18), LocalTime.NOON)));
+        List<Alert> alertsActual = alertService.getAlertsByDevice(9, LocalDate.of(2014, Month.SEPTEMBER, 9));
         assertSame(0, alertsActual.size());
     }
-    *//*
+
     @Test
     public void testGetAlertByStorageYears() {
         List<Alert> alertsActual = alertService.getAlertsByStorageYears(10);
         assertSame(3, alertsActual.size());
-		Alert alert3 = new Alert(3, 9, LocalDate.of(2003, Month.JULY, 16), 3);
+		Alert alert3 = new Alert(9, LocalDate.of(2003, Month.JULY, 16), 3);
         assert(alert3.equals(alertsActual.get(2)));
     }
     
@@ -109,7 +111,7 @@ public class AlertServiceTest {
         List<Alert> alertsActual = alertService.getAlerts();
     	Alert alert1 = new Alert(9, LocalDate.of(1997, Month.APRIL, 18), 1);
 		
-        assertSame(1, alertService.insertNewAlertWithRowsInsertedCheck(alert1)); 
+        assertSame(1, alertService.insertNewAlert(alert1)); 
         System.out.println("insert");
 
 		System.out.println(alertsActual);
@@ -119,7 +121,7 @@ public class AlertServiceTest {
     @Test
     public void testUpdateAlert() {
         List<Alert> alertsActual = alertService.getAlerts();
-		Alert alert3 = new Alert(3, 100, LocalDate.of(1998, Month.MAY, 7), 2);
+		Alert alert3 = new Alert(alertsActual.get(2).getIdAlert(), 100, LocalDate.of(2008, Month.MAY, 7), 2);
         assertSame(1,alertService.updateAlert(alert3)); 
 		System.out.println("update");
 
@@ -131,12 +133,12 @@ public class AlertServiceTest {
     @AfterAll
     public void testDeleteAlert() {
         List<Alert> alertsActual = alertService.getAlerts();
-        Alert alert1 = new Alert(1, 9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
-		Alert alert2 = new Alert(2, 10, LocalDate.of(1998, Month.MAY, 7), 2);
+        Alert alert1 = new Alert(9, LocalDate.of(1994, Month.SEPTEMBER, 9), 1);
+		Alert alert2 = new Alert(10, LocalDate.of(1998, Month.MAY, 7), 2);
 		
         assertSame(1, alertService.deleteAlert(alert1));    
         assertSame(2, alertsActual.size());
 		assert(alert2.equals(alertsActual.get(0)));
-    }*/
- 
+    }
+*/ 
 }

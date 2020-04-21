@@ -29,7 +29,7 @@ final Logger logger = LoggerFactory.getLogger(this.getClass());
 	public ResponseEntity<GetTodoByIdResponse> getTodo(@PathVariable Integer id) {
 		logger.info("---------- GET /todo/{id} ----------");
 		Todo todo = todoService.getTodoById(id);
-		
+				
 		if(todo == null) {
 			logger.info("INPUT VALIDATION ERROR - no todo found with id => " + id);
 			throw new FailureException(HttpStatus.BAD_REQUEST, ResponseErrorEnum.ERR_3);

@@ -14,6 +14,7 @@ public class GetTodoByIdResponse extends Response {
 	public GetTodoByIdResponse(int code, String message, Todo todo) {
 		super(code, message);
 		this.todo = todo.toDTOTodo();	
+
 	}
 
 	public DTOTodo getTodo() {

@@ -1,20 +1,22 @@
 package com.tecnositaf.centrobackend.model;
 
-import java.time.LocalDate;
 
 import org.springframework.beans.BeanUtils;
 
-
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.tecnositaf.centrobackend.dto.DTOTodo;
 
 public class Todo {
-	
-	private Integer id;
 
+	@JsonAlias("id")
+	private Integer id;
+	
+	@JsonAlias("userId")
 	private Integer userId;
+	
 	private String title;
 	private Boolean completed;
-	
+
 	public Todo() {
 		
 	}
@@ -26,12 +28,6 @@ public class Todo {
 		this.setCompleted(completed);	
 	}
 	
-	public Todo(Integer idDeviceFk, LocalDate ts, Integer idType) {
-		this.setId(id);
-		this.setUserId(userId);
-		this.setTitle(title);
-		this.setCompleted(completed);	
-	}
 	
 	public Integer getId() {
 		return id;
@@ -76,7 +72,9 @@ public class Todo {
 	//XXX nuovo metodo che ho aggiunto al model per il passaggo al DTO corrispondente
 	public DTOTodo toDTOTodo() {
 		DTOTodo output = new DTOTodo();						
-		BeanUtils.copyProperties(this, output);		
+		BeanUtils.copyProperties(this, output);	
+		output.setIdTodo(this.id);
+		output.setIdUserFk(this.userId);
 		return output;
 	}
 	

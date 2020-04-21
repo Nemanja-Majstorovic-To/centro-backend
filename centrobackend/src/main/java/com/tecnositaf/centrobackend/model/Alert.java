@@ -76,12 +76,12 @@ public class Alert {
 	}
 
 	
-	@Override
-	public boolean equals(Object o) {
+	
+	public boolean equalsWithoutId(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Alert alert = (Alert) o;
-		return Objects.equals(idAlert, alert.idAlert) &&
+		return 
 				Objects.equals(idDeviceFk, alert.idDeviceFk) &&
 				Objects.equals(idType, alert.idType) &&
 				Objects.equals(localDate, alert.localDate);
